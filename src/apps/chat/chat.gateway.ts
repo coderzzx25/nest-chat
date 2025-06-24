@@ -96,7 +96,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: {
       otherUserId: string;
       limit?: number;
-      before?: string;
+      before?: number;
     },
     @ConnectedSocket() client: Socket,
   ) {
@@ -111,6 +111,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const messages = await this.messageService.getConversation(
       userId,
       data.otherUserId,
+      data.before,
+      data.limit,
     );
 
     client.emit('messageHistory', {

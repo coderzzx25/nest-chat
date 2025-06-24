@@ -25,17 +25,25 @@ export class MessageService {
     return savedMessage.selectMessageResponseDto();
   }
 
-  async getConversation(user1Id: string, user2Id: string, before = 20) {
+  async getConversation(
+    user1Id: string,
+    user2Id: string,
+    before = 20,
+    limit = 0,
+  ) {
     const response = await this.messageRepository.find({
       where: [
         { senderId: user1Id, recipientId: user2Id },
         { senderId: user2Id, recipientId: user1Id },
       ],
-      order: { createTime: 'ASC' },
+      order: { createTime: 'DESC' },
       take: before,
+      skip: limit,
     });
 
-    return response.map((message) => message.selectMessageResponseDto());
+    return response
+      .reverse()
+      .map((message) => message.selectMessageResponseDto());
   }
 
   async markMessagesAsDelivered(recipientId: string, senderId: string) {
